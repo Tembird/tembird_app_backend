@@ -1,15 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const verificationRoute = require('./src/route/verification_route');
 
 app.use(bodyParser.json());
-app.use((error, req, res, next) => {
-    const status = error.statusCode || 500;
-    const message = error.message;
-    res.status(status).json({ message: message });
-});
+app.use('/api/verification', verificationRoute);
 
-const server = app.listen(3000, () => {
+app.listen(3000, () => {
     console.log('Server listening on port 3000');
 });
 

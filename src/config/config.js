@@ -19,6 +19,15 @@ const config = {
             refreshToken: "14d",
         },
     },
+    verification: {
+        // expirationTime is 600,000ms = 600s = 10min
+        expirationTime: 600000,
+    },
+    email: {
+        service: process.env.EMAIL_SERVICE,
+        user: process.env.EMAIL_USER,
+        password: process.env.EMAIL_PASSWORD,
+    },
 }
 
 module.exports = config;
