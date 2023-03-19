@@ -39,7 +39,7 @@ const UserController = {
             res.set('Refresh-Token', refreshToken);
             return res.status(201).json({message: '사용자 등록이 완료되었습니다'});
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     },
     login: async function (req, res) {
@@ -72,7 +72,7 @@ const UserController = {
             res.set('Access-Token', accessToken);
             return res.status(200).json({message: '로그인에 성공하였습니다'});
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     },
     updateAccessToken: async function (req, res) {
@@ -106,7 +106,7 @@ const UserController = {
             res.set('Refresh-Token', newRefreshToken);
             return res.status(201).json({message: '액세스 토큰 및 리프레시 토큰 갱신에 성공하였습니다'});
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     },
     updateUsername: async function (req, res) {
@@ -120,7 +120,7 @@ const UserController = {
             await UserModel.updateUsername(uid, username);
             return res.status(201).json({message: '아이디 변경에 성공하였습니다'});
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     },
     updatePassword: async function (req, res) {
@@ -143,7 +143,7 @@ const UserController = {
             await UserModel.updatePassword(uid, encryptedNewPassword);
             return res.status(201).json({message: '비밀번호 변경에 성공하였습니다'});
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     }
 };

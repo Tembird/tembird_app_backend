@@ -18,7 +18,7 @@ const Root = {
             next();
 
         } catch (error) {
-            return res.status(error.status).json({"message":error.message});
+            return res.status(error.status).json({message:error.message});
         }
     }
 }

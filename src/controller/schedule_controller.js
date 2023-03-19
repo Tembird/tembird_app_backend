@@ -30,7 +30,7 @@ const ScheduleController = {
                 message: '일정 등록이 완료되었습니다', body: {sid: sid}
             });
         } catch (error) {
-            return res.status(error.status).json({"message": error.message});
+            return res.status(error.status).json({message: error.message});
         }
     },
     update: async function (req, res) {
