@@ -23,13 +23,29 @@ const Schedule = {
                 [schedule.colorHex, schedule.title, schedule.detail, schedule.location, schedule.members, schedule.sid, schedule.uid],
             );
             if (results.affectedRows === 0) {
-                throw {status: 403, message: "일정 수정 권한이 없습니다"};
+                throw {status: 404, message: "존재하지 않는 일정입니다"};
             }
         } catch (error) {
             if (error !== undefined) {
                 throw error;
             }
             throw {status: 500, message: "일정 수정에 실패하였습니다"};
+        }
+    },
+    delete: async function (schedule) {
+        try {
+            const [results] = await db.query(
+                'DELETE FROM tb_schedule WHERE sid = ? AND uid = ? LIMIT 1',
+                [schedule.sid, schedule.uid],
+            );
+            if (results.affectedRows === 0) {
+                throw {status: 404, message: "존재하지 않는 일정입니다"};
+            }
+        } catch (error) {
+            if (error !== undefined) {
+                throw error;
+            }
+            throw {status: 500, message: "일정 삭제에 실패하였습니다"};
         }
     },
 }
