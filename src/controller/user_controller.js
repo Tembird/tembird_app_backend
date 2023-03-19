@@ -53,7 +53,7 @@ const UserController = {
             }
 
             // Get User from DB
-            const user = await UserModel.get(email);
+            const user = await UserModel.getUserByEmail(email);
 
             // Check Password is Correct
             const isCorrectPassword = await EncryptionService.compareEncryptedPassword(password, user.password);
@@ -119,6 +119,29 @@ const UserController = {
 
             await UserModel.updateUsername(uid, username);
             return res.status(201).json({message: '아이디 변경에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({"message":error.message});
+        }
+    },
+    updatePassword: async function (req, res) {
+        try {
+            const password = req.body.password;
+            const newPassword = req.body.newPassword;
+            const uid = req.uid;
+            if (password === undefined || newPassword === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            const encryptedNewPassword = await EncryptionService.encryptPassword(newPassword);
+
+            const user = await UserModel.getUserByUid(uid);
+            const isCorrectUser = await EncryptionService.compareEncryptedPassword(password, user.password);
+            if (!isCorrectUser) {
+                return res.status(400).json({message: '비밀번호가 일치하지 않습니다'});
+            }
+
+            await UserModel.updatePassword(uid, encryptedNewPassword);
+            return res.status(201).json({message: '비밀번호 변경에 성공하였습니다'});
         } catch (error) {
             return res.status(error.status).json({"message":error.message});
         }
