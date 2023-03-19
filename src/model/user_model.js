@@ -13,6 +13,36 @@ const User = {
             throw {status: 500, message: "유저 생성에 실패하였습니다"};
         }
     },
+    get: async function (email) {
+        try {
+            const [results] = await db.query('SELECT * FROM tb_user WHERE email = ? LIMIT 1', [email]);
+            if (!results.length) {
+                throw {status: 404, message: "등록되지 않은 이메일입니다"};
+            }
+
+            const user = {
+                email: results[0].email,
+                password: results[0].password,
+                uid: results[0].uid,
+                username: results[0].username,
+                isValid: results[0].is_valid,
+            };
+
+            return user;
+        } catch (error) {
+            if (error.status || error.message) {
+                throw error;
+            }
+            throw {status: 500, message: "로그인 요청을 처리할 수 없습니다"};
+        }
+    },
+    updateRefreshToken: async function (uid, refreshToken) {
+        try {
+            await db.query('UPDATE tb_user SET refresh_token = ? WHERE uid = ? LIMIT 1', [refreshToken, uid]);
+        } catch (error) {
+            throw {status: 500, message: "RefreshToken 갱신 실패"};
+        }
+    },
 };
 
 module.exports = User;

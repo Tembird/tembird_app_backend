@@ -15,6 +15,10 @@ const EncryptionService = {
             throw {status: 500, message: "비밀번호 복호화에 실패하였습니다"};
         }
     },
+    compareEncryptedPassword: async function(password, storedHashedPassword) {
+        // Compare password is Match with storedHashedPassword
+        return await bcrypt.compare(password, storedHashedPassword);
+    }
 };
 
 module.exports = EncryptionService;

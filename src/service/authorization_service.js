@@ -23,12 +23,12 @@ const AuthorizationService = {
             throw {status: 500, message: "refresh 인증 토큰 생성에 실패하였습니다"};
         }
     },
-    generateAccessToken: async function (uid, id) {
+    generateAccessToken: async function (uid, username) {
         try {
             const payload = {
                 createdAt: new Date().getTime(),
                 uid: uid,
-                id: id,
+                username: username,
             }
             const options = {
                 expiresIn: accessTokenExpiresIn,
