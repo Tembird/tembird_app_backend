@@ -32,7 +32,30 @@ const ScheduleController = {
         } catch (error) {
             return res.status(error.status).json({"message": error.message});
         }
-    }
+    },
+    update: async function (req, res) {
+        try {
+            if (req.body.sid === undefined || req.body.colorHex === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            const schedule = {
+                uid: req.uid,
+                sid: req.body.sid,
+                colorHex: req.body.colorHex,
+                title: req.body.title,
+                detail: req.body.detail,
+                location: req.body.location,
+                members: req.body.members,
+            };
+
+            // Save Schedule on DB
+            await ScheduleModel.update(schedule);
+            return res.status(201).json({message: '일정 수정이 완료되었습니다'});
+        } catch (error) {
+            return res.status(error.status).json({message: error.message});
+        }
+    },
 }
 
 module.exports = ScheduleController;

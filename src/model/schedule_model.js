@@ -16,6 +16,22 @@ const Schedule = {
             throw {status: 500, message: "일정 등록에 실패하였습니다"};
         }
     },
+    update: async function (schedule) {
+        try {
+            const [results] = await db.query(
+                'UPDATE tb_schedule SET color_hex = ?, title = ?,detail = ?, location = ?, members = ? WHERE sid = ? AND uid = ? LIMIT 1',
+                [schedule.colorHex, schedule.title, schedule.detail, schedule.location, schedule.members, schedule.sid, schedule.uid],
+            );
+            if (results.affectedRows === 0) {
+                throw {status: 403, message: "일정 수정 권한이 없습니다"};
+            }
+        } catch (error) {
+            if (error !== undefined) {
+                throw error;
+            }
+            throw {status: 500, message: "일정 수정에 실패하였습니다"};
+        }
+    },
 }
 
 module.exports = Schedule;
