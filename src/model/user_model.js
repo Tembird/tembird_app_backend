@@ -8,7 +8,7 @@ const User = {
             await db.query('INSERT INTO tb_user(email, password, uid, username, refresh_token) VALUES(?, ?, ?, ?, ?)', [user.email, user.password, user.uid, user.username, user.refreshToken]);
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {
-                throw { status: 400, message: '이미 등록된 이메일입니다.' };
+                throw { status: 409, message: '이미 등록된 이메일입니다.' };
             }
             throw {status: 500, message: "유저 생성에 실패하였습니다"};
         }
