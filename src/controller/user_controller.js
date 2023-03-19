@@ -6,7 +6,7 @@ const EncryptionService = require('../service/encryption_service');
 const UuidService = require('../service/uuid_service');
 
 const UserController = {
-    generateRandomUsername: (email) => 'unknown#' + new Date().getTime(),
+    generateRandomUsername: () => 'unknown#' + new Date().getTime(),
     signUp: async function (req, res) {
         try {
             const email = req.body.email;
@@ -64,16 +64,47 @@ const UserController = {
             if (user.isValid === 0) {
                 return res.status(403).json({message: '사용할 수 없는 계정입니다\n고객 센터로 문의해주세요'});
             }
-            // Update RefreshToken
-            const refreshToken = await AuthorizationService.generateRefreshToken();
-            await UserModel.updateRefreshToken(user.uid, refreshToken);
-            // Create AccessToken
+
+            // Generate AccessToken
             const accessToken = await AuthorizationService.generateAccessToken(user.uid, user.username);
 
-            // Return Success with Tokens
+            // Return New AccessToken
             res.set('Access-Token', accessToken);
-            res.set('Refresh-Token', refreshToken);
             return res.status(200).json({message: '로그인에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({"message":error.message});
+        }
+    },
+    updateAccessToken: async function (req, res) {
+        try {
+            const accessToken = req.get('Access-Token');
+            const refreshToken = req.get('Refresh-Token');
+
+            // Wrong Request
+            if(accessToken === undefined || refreshToken === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+            // Verify RefreshToken
+            await AuthorizationService.verifyRefreshToken(refreshToken);
+            // If RefreshToken is Valid, Generate New AccessToken
+            const user = await AuthorizationService.decodeToken(accessToken);
+            const newAccessToken = await AuthorizationService.generateAccessToken(user.uid, user.username);
+
+            // Decode Refresh to get ExpiredAt
+            const decodedRefresh = await AuthorizationService.decodeToken(refreshToken);
+
+            if (decodedRefresh.exp > new Date().getTime() / 1000 + 259200) {
+                res.set('Access-Token', newAccessToken);
+                return res.status(201).json({message: '액세스 토큰 갱신에 성공하였습니다'});
+            }
+
+            // Update Refresh Token if left Under 3 Days to expired
+            const newRefreshToken = await AuthorizationService.generateRefreshToken();
+            await UserModel.updateRefreshToken(user.uid, refreshToken, newRefreshToken);
+
+            res.set('Access-Token', newAccessToken);
+            res.set('Refresh-Token', newRefreshToken);
+            return res.status(201).json({message: '액세스 토큰 및 리프레시 토큰 갱신에 성공하였습니다'});
         } catch (error) {
             return res.status(error.status).json({"message":error.message});
         }

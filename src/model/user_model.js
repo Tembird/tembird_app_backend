@@ -36,9 +36,9 @@ const User = {
             throw {status: 500, message: "로그인 요청을 처리할 수 없습니다"};
         }
     },
-    updateRefreshToken: async function (uid, refreshToken) {
+    updateRefreshToken: async function (uid, refreshToken, newRefreshToken) {
         try {
-            await db.query('UPDATE tb_user SET refresh_token = ? WHERE uid = ? LIMIT 1', [refreshToken, uid]);
+            await db.query('UPDATE tb_user SET refresh_token = ? WHERE uid = ? AND refresh_token = ? LIMIT 1', [newRefreshToken, uid, refreshToken]);
         } catch (error) {
             throw {status: 500, message: "리프레쉬 토큰의 갱신에 실패하였습니다"};
         }
