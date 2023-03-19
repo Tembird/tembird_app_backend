@@ -109,6 +109,20 @@ const UserController = {
             return res.status(error.status).json({"message":error.message});
         }
     },
+    updateUsername: async function (req, res) {
+        try {
+            const username = req.body.username;
+            const uid = req.uid;
+            if (username === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            await UserModel.updateUsername(uid, username);
+            return res.status(201).json({message: '아이디 변경에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({"message":error.message});
+        }
+    }
 };
 
 module.exports = UserController;

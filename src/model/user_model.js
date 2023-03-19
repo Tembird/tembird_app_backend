@@ -43,6 +43,16 @@ const User = {
             throw {status: 500, message: "리프레쉬 토큰의 갱신에 실패하였습니다"};
         }
     },
+    updateUsername: async function (uid, username) {
+        try {
+            await db.query('UPDATE tb_user SET username = ? WHERE uid = ? LIMIT 1', [username, uid]);
+        } catch (error) {
+            if (error.code === 'ER_DUP_ENTRY') {
+                throw { status: 409, message: '이미 등록된 아이디입니다' };
+            }
+            throw {status: 500, message: "아이디 변경에 실패하였습니다"};
+        }
+    },
 };
 
 module.exports = User;
