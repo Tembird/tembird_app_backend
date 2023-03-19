@@ -5,17 +5,17 @@ const db = require('../config/db');
 const User = {
     create: async function (user) {
         try {
-            await db.query('INSERT INTO tb_user(email, password, uid, username, refresh_token) VALUES(?, ?, ?, ?, ?)', [user.email, user.password, user.uid, user.username, user.refreshToken]);
+            await db.query('INSERT INTO tb_users(email, password, uid, username, refresh_token) VALUES(?, ?, ?, ?, ?)', [user.email, user.password, user.uid, user.username, user.refreshToken]);
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {
                 throw { status: 409, message: '이미 등록된 이메일입니다' };
             }
-            throw {status: 500, message: "유저 생성에 실패하였습니다"};
+            throw {status: 500, message: "사용자 생성에 실패하였습니다"};
         }
     },
     getUserByEmail: async function (email) {
         try {
-            const [results] = await db.query('SELECT * FROM tb_user WHERE email = ? LIMIT 1', [email]);
+            const [results] = await db.query('SELECT * FROM tb_users WHERE email = ? LIMIT 1', [email]);
             if (!results.length) {
                 throw {status: 404, message: "등록되지 않은 이메일입니다"};
             }
@@ -30,7 +30,7 @@ const User = {
 
             return user;
         } catch (error) {
-            if (error.status || error.message) {
+            if (error) {
                 throw error;
             }
             throw {status: 500, message: "로그인 요청을 처리할 수 없습니다"};
@@ -38,9 +38,9 @@ const User = {
     },
     getUserByUid: async function (uid) {
         try {
-            const [results] = await db.query('SELECT * FROM tb_user WHERE uid = ? LIMIT 1', [uid]);
+            const [results] = await db.query('SELECT * FROM tb_users WHERE uid = ? LIMIT 1', [uid]);
             if (!results.length) {
-                throw {status: 401, message: "알 수 없는 유저입니다"};
+                throw {status: 401, message: "알 수 없는 사용자입니다"};
             }
 
             const user = {
@@ -49,7 +49,7 @@ const User = {
 
             return user;
         } catch (error) {
-            if (error.status || error.message) {
+            if (error) {
                 throw error;
             }
             throw {status: 500, message: "요청을 처리할 수 없습니다"};
@@ -57,26 +57,43 @@ const User = {
     },
     updateRefreshToken: async function (uid, refreshToken, newRefreshToken) {
         try {
-            await db.query('UPDATE tb_user SET refresh_token = ? WHERE uid = ? AND refresh_token = ? LIMIT 1', [newRefreshToken, uid, refreshToken]);
+            const [results] = await db.query('UPDATE tb_users SET refresh_token = ? WHERE uid = ? AND refresh_token = ? LIMIT 1', [newRefreshToken, uid, refreshToken]);
+            if (results.affectedRows === 0) {
+                throw {status: 401, message: "알 수 없는 사용자입니다"};
+            }
         } catch (error) {
+            if (error) {
+                throw error;
+            }
             throw {status: 500, message: "리프레쉬 토큰의 갱신에 실패하였습니다"};
         }
     },
     updateUsername: async function (uid, username) {
         try {
-            await db.query('UPDATE tb_user SET username = ? WHERE uid = ? LIMIT 1', [username, uid]);
+            const [results] = await db.query('UPDATE tb_users SET username = ? WHERE uid = ? LIMIT 1', [username, uid]);
+            if (results.affectedRows === 0) {
+                throw {status: 401, message: "알 수 없는 사용자입니다"};
+            }
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {
                 throw { status: 409, message: '이미 등록된 아이디입니다' };
+            }
+            if (error) {
+                throw error;
             }
             throw {status: 500, message: "아이디 변경에 실패하였습니다"};
         }
     },
     updatePassword: async function (uid, newPassword) {
         try {
-            await db.query('UPDATE tb_user SET password = ? WHERE uid = ? LIMIT 1', [newPassword, uid]);
+            const [results] = await db.query('UPDATE tb_users SET password = ? WHERE uid = ? LIMIT 1', [newPassword, uid]);
+            if (results.affectedRows === 0) {
+                throw {status: 401, message: "알 수 없는 사용자입니다"};
+            }
         } catch (error) {
-            console.log(error);
+            if (error) {
+                throw error;
+            }
             throw {status: 500, message: "비밀번호 변경에 실패하였습니다"};
         }
     },

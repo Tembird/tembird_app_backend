@@ -6,7 +6,7 @@ const Schedule = {
     create: async function (schedule) {
         try {
             await db.query(
-                'INSERT INTO tb_schedule (uid, sid, date, start_at, end_at, color_hex, title, detail, location, members) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO tb_schedules (uid, sid, date, start_at, end_at, color_hex, title, detail, location, members) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [schedule.uid, schedule.sid, schedule.date, schedule.startAt, schedule.endAt, schedule.colorHex, schedule.title, schedule.detail, schedule.location, schedule.members],
             );
         } catch (error) {
@@ -19,14 +19,14 @@ const Schedule = {
     update: async function (schedule) {
         try {
             const [results] = await db.query(
-                'UPDATE tb_schedule SET color_hex = ?, title = ?,detail = ?, location = ?, members = ? WHERE sid = ? AND uid = ? LIMIT 1',
+                'UPDATE tb_schedules SET color_hex = ?, title = ?,detail = ?, location = ?, members = ? WHERE sid = ? AND uid = ? LIMIT 1',
                 [schedule.colorHex, schedule.title, schedule.detail, schedule.location, schedule.members, schedule.sid, schedule.uid],
             );
             if (results.affectedRows === 0) {
                 throw {status: 404, message: "존재하지 않는 일정입니다"};
             }
         } catch (error) {
-            if (error !== undefined) {
+            if (error) {
                 throw error;
             }
             throw {status: 500, message: "일정 수정에 실패하였습니다"};
@@ -35,14 +35,14 @@ const Schedule = {
     delete: async function (schedule) {
         try {
             const [results] = await db.query(
-                'DELETE FROM tb_schedule WHERE sid = ? AND uid = ? LIMIT 1',
+                'DELETE FROM tb_schedules WHERE sid = ? AND uid = ? LIMIT 1',
                 [schedule.sid, schedule.uid],
             );
             if (results.affectedRows === 0) {
                 throw {status: 404, message: "존재하지 않는 일정입니다"};
             }
         } catch (error) {
-            if (error !== undefined) {
+            if (error) {
                 throw error;
             }
             throw {status: 500, message: "일정 삭제에 실패하였습니다"};
