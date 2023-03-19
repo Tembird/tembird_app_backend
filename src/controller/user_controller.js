@@ -62,7 +62,7 @@ const UserController = {
             }
 
             if (user.isValid === 0) {
-                return res.status(403).json({message: '사용할 수 없는 계정입니다.\n고객 센터로 문의해주세요.'});
+                return res.status(403).json({message: '사용할 수 없는 계정입니다\n고객 센터로 문의해주세요'});
             }
             // Update RefreshToken
             const refreshToken = await AuthorizationService.generateRefreshToken();

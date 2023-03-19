@@ -20,7 +20,7 @@ const AuthorizationService = {
 
             return await jwt.sign(payload, refreshTokenSecretKey, options);
         } catch (error) {
-            throw {status: 500, message: "refresh 인증 토큰 생성에 실패하였습니다"};
+            throw {status: 500, message: "리프레쉬 토큰 생성에 실패하였습니다"};
         }
     },
     generateAccessToken: async function (uid, username) {
@@ -36,7 +36,7 @@ const AuthorizationService = {
 
             return await jwt.sign(payload, accessTokenSecretKey, options);
         } catch (error) {
-            throw {status: 500, message: "access 인증 토큰 생성에 실패하였습니다"};
+            throw {status: 500, message: "엑세스 토큰 생성에 실패하였습니다"};
         }
     },
 };
