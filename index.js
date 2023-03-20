@@ -5,12 +5,14 @@ const verificationRoute = require('./src/route/verification_route');
 const UserRoute = require('./src/route/user_route');
 const ScheduleRoute = require('./src/route/schedule_route');
 const ColorRoute = require('./src/route/color_route');
+const FeedbackRoute = require('./src/route/feedback_route');
 
 app.use(bodyParser.json());
 app.use('/api/verification', verificationRoute);
 app.use('/api/user', UserRoute);
 app.use('/api/schedule', ScheduleRoute);
 app.use('/api/color', ColorRoute);
+app.use('/api/feedback', FeedbackRoute);
 
 app.listen(3000, () => {
     console.log('Server listening on port 3000');
