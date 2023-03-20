@@ -1,4 +1,4 @@
-// route/feedback_route.js
+// route/announcement_route.js
 
 const express = require('express');
 const router = express.Router();

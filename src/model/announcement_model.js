@@ -1,4 +1,4 @@
-// model/feedback_model.js
+// model/announcement_model.js
 
 const db = require('../config/db');
 

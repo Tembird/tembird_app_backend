@@ -1,4 +1,4 @@
-// controller/feedback_controller.js
+// controller/announcement_controller.js
 
 const AnnouncementModel = require('../model/announcement_model');
 
