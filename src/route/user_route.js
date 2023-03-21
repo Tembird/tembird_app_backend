@@ -10,5 +10,6 @@ router.post('/login', UserController.login);
 router.post('/refresh', UserController.updateAccessToken);
 router.put('/username', Root.authentication, UserController.updateUsername);
 router.put('/update-password', Root.authentication, UserController.updatePassword);
+router.put('/reset-password', UserController.resetPassword);
 
 module.exports = router;

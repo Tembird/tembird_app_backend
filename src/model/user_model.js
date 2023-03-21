@@ -97,6 +97,19 @@ const User = {
             throw {status: 500, message: "비밀번호 변경에 실패하였습니다"};
         }
     },
+    resetPassword: async function (email, password) {
+        try {
+            const [results] = await db.query('UPDATE tb_users SET password = ? WHERE email = ? LIMIT 1', [password, email]);
+            if (results.affectedRows === 0) {
+                throw {status: 404, message: "등록되어 있지 않은 사용자입니다"};
+            }
+        } catch (error) {
+            if (error) {
+                throw error;
+            }
+            throw {status: 500, message: "비밀번호 초기화에 실패하였습니다"};
+        }
+    },
 };
 
 module.exports = User;

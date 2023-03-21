@@ -4,6 +4,7 @@ const UserModel = require('../model/user_model');
 const AuthorizationService = require('../service/authorization_service');
 const EncryptionService = require('../service/encryption_service');
 const UuidService = require('../service/uuid_service');
+const config = require('../config/config');
 
 const UserController = {
     generateRandomUsername: () => 'unknown#' + new Date().getTime(),
@@ -145,7 +146,23 @@ const UserController = {
         } catch (error) {
             return res.status(error.status).json({message:error.message});
         }
-    }
+    },
+    resetPassword: async function (req, res) {
+        try {
+            const email = req.body.email;
+            const password = req.body.password;
+            if (email === undefined || password === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            const encryptedNewPassword = await EncryptionService.encryptPassword(password);
+
+            await UserModel.resetPassword(email, encryptedNewPassword);
+            return res.status(201).json({message: '비밀번호 변경에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({message:error.message});
+        }
+    },
 };
 
 module.exports = UserController;
