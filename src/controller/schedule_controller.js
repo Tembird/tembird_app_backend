@@ -35,12 +35,12 @@ const ScheduleController = {
     },
     read: async function (req, res) {
         try {
-            if (req.body.date === undefined) {
+            if (req.params.date === undefined) {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
 
             const uid = req.uid;
-            const date = req.body.date;
+            const date = req.params.date;
 
             // Read Schedule on DB
             const result  = await ScheduleModel.read(uid, date);
