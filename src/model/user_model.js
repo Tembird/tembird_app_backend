@@ -26,6 +26,7 @@ const User = {
                 uid: results[0].uid,
                 username: results[0].username,
                 isValid: results[0].is_valid,
+                refreshToken: results[0].refresh_token,
             };
 
             return user;
