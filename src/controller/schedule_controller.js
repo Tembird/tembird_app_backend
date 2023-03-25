@@ -60,8 +60,11 @@ const ScheduleController = {
             }
 
             const schedule = {
-                uid: req.uid,
                 sid: req.body.sid,
+                uid: req.uid,
+                date: req.body.date,
+                startAt: req.body.startAt,
+                endAt: req.body.endAt,
                 colorHex: req.body.colorHex,
                 title: req.body.title,
                 detail: req.body.detail,
