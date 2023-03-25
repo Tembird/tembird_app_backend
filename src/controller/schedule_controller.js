@@ -82,13 +82,13 @@ const ScheduleController = {
     },
     delete: async function (req, res) {
         try {
-            if (req.body.sid === undefined) {
+            if (req.params.sid === undefined) {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
 
             const schedule = {
                 uid: req.uid,
-                sid: req.body.sid,
+                sid: req.params.sid,
             };
 
             // Delete Schedule on DB
