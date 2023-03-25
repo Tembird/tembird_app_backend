@@ -16,7 +16,7 @@ const Schedule = {
             throw {status: 500, message: "일정 등록에 실패하였습니다"};
         }
     },
-    read: async function (uid, date) {
+    readList: async function (uid, date) {
         try {
             const [results] = await db.query(
                 'SELECT sid, date, start_at, end_at, color_hex, title, detail, location, member_list, created_at, edited_at, done, done_at FROM tb_schedules WHERE uid = ? AND date = ?',

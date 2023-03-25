@@ -43,7 +43,7 @@ const ScheduleController = {
             const date = req.params.date;
 
             // Read Schedule on DB
-            const result = await ScheduleModel.read(uid, date);
+            const result = await ScheduleModel.readList(uid, date);
             return res.status(200).json({
                 message: '일정 조회가 완료되었습니다', body: {list: result}
             });
