@@ -30,6 +30,23 @@ const Schedule = {
             throw {status: 500, message: "일정 조회에 실패하였습니다"};
         }
     },
+    read: async function (sid, uid) {
+        try {
+            const [results] = await db.query(
+                'SELECT sid, date, start_at, end_at, color_hex, title, detail, location, member_list, created_at, edited_at, done, done_at FROM tb_schedules WHERE sid = ? AND uid = ? LIMIT 1',
+                [sid, uid],
+            );
+            if (results.length === 0) {
+                throw {status: 404, message: "존재하지 않는 일정입니다"};
+            }
+            return results;
+        } catch (error) {
+            if (error) {
+                throw error;
+            }
+            throw {status: 500, message: "일정 조회에 실패하였습니다"};
+        }
+    },
     update: async function (schedule) {
         try {
             const [results] = await db.query(

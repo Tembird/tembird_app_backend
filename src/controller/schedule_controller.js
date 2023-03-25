@@ -26,10 +26,12 @@ const ScheduleController = {
 
             // Save Schedule on DB
             await ScheduleModel.create(schedule);
+            const [result] = await ScheduleModel.read(sid, req.uid);
             return res.status(201).json({
-                message: '일정 등록이 완료되었습니다', body: {sid: sid}
+                message: '일정 등록이 완료되었습니다', body: result
             });
         } catch (error) {
+            console.log(error);
             return res.status(error.status).json({message: error.message});
         }
     },
@@ -69,7 +71,8 @@ const ScheduleController = {
 
             // Save Schedule on DB
             await ScheduleModel.update(schedule);
-            return res.status(201).json({message: '일정 수정이 완료되었습니다'});
+            const [result] = await ScheduleModel.read(req.body.sid, req.uid);
+            return res.status(201).json({message: '일정 수정이 완료되었습니다', body: result});
         } catch (error) {
             return res.status(error.status).json({message: error.message});
         }
