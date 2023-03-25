@@ -21,7 +21,7 @@ const ScheduleController = {
                 title: req.body.title,
                 detail: req.body.detail,
                 location: req.body.location,
-                memberList: req.body.memberList,
+                // memberList: req.body.memberList,
             };
 
             // Save Schedule on DB
@@ -69,7 +69,7 @@ const ScheduleController = {
                 title: req.body.title,
                 detail: req.body.detail,
                 location: req.body.location,
-                memberList: req.body.memberList,
+                // memberList: req.body.memberList,
             };
 
             // Save Schedule on DB
