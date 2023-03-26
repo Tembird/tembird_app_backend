@@ -113,6 +113,19 @@ const User = {
             throw {status: 500, message: "비밀번호 초기화에 실패하였습니다"};
         }
     },
+    updateDevice: async function (uid, platform, platformVersion, buildNum) {
+        try {
+            const [results] = await db.query('UPDATE tb_users SET platform = ?, platform_version = ?, build_num = ? WHERE uid = ? LIMIT 1', [platform, platformVersion, buildNum, uid]);
+            if (results.affectedRows === 0) {
+                throw {status: 404, message: "등록되어 있지 않은 사용자입니다"};
+            }
+        } catch (error) {
+            if (error) {
+                throw error;
+            }
+            throw {status: 500, message: "유저 기록 저장에 실패하였습니다"};
+        }
+    },
 };
 
 module.exports = User;

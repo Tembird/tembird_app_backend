@@ -184,6 +184,22 @@ const UserController = {
             return res.status(error.status).json({message:error.message});
         }
     },
+    updateDevice: async function (req, res) {
+        try {
+            const uid = req.uid;
+            const platform = req.body.platform;
+            const platformVersion = req.body.platformVersion;
+            const buildNum = req.body.buildNum;
+            if (platform === undefined || buildNum === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            await UserModel.updateDevice(uid, platform, platformVersion, buildNum);
+            return res.status(201).json({message: '유저 기록 저장에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({message:error.message});
+        }
+    },
 };
 
 module.exports = UserController;

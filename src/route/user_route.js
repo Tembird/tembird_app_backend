@@ -12,5 +12,6 @@ router.put('/username', Root.authentication, UserController.updateUsername);
 router.put('/update-password', Root.authentication, UserController.updatePassword);
 router.put('/reset-password', UserController.resetPassword);
 router.get('', Root.authentication, UserController.read);
+router.put('/device', Root.authentication, UserController.updateDevice);
 
 module.exports = router;
