@@ -164,6 +164,22 @@ const UserController = {
             return res.status(error.status).json({message:error.message});
         }
     },
+    read: async function (req, res) {
+        try {
+            const result = await UserModel.getUserByUid(req.uid);
+            return res.status(200).json({
+                message: '유저 정보를 성공적으로 로드하였습니다',
+                body: {
+                    'email':result.email,
+                    'username':result.username,
+                    'is_valid':result.is_valid,
+                    'created_at':result.created_at,
+                }
+            });
+        } catch (error) {
+            return res.status(error.status).json({message:error.message});
+        }
+    },
 };
 
 module.exports = UserController;

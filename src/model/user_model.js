@@ -44,11 +44,13 @@ const User = {
                 throw {status: 401, message: "알 수 없는 사용자입니다"};
             }
 
-            const user = {
-                password: results[0].password,
-            };
+            return results[0];
 
-            return user;
+            // const user = {
+            //     password: results[0].password,
+            // };
+            //
+            // return user;
         } catch (error) {
             if (error) {
                 throw error;
