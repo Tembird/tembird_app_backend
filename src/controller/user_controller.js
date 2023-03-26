@@ -119,6 +119,10 @@ const UserController = {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
 
+            if (username.substring(0, 8) === 'unknown#') {
+                return res.status(400).json({message: '사용할 수 없는 아이디입니다'});
+            }
+
             await UserModel.updateUsername(uid, username);
             return res.status(201).json({message: '아이디 변경에 성공하였습니다'});
         } catch (error) {
