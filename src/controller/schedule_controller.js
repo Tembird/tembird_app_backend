@@ -6,11 +6,12 @@ const ScheduleModel = require("../model/schedule_model");
 const ScheduleController = {
     create: async function (req, res) {
         try {
-            if (req.body.date === undefined || req.body.startAt === undefined || req.body.endAt === undefined || req.body.colorHex === undefined) {
+            if (req.body.date === undefined || req.body.startAt === undefined || req.body.endAt === undefined || req.body.colorHex === undefined || req.body.todoList === undefined) {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
 
-            const sid = UuidService.generateUuid();
+            const sid = UuidService.generateUuid() + new Date().getTime();
+            const newTodoList = [];
             const schedule = {
                 sid: sid,
                 uid: req.uid,
@@ -21,11 +22,20 @@ const ScheduleController = {
                 title: req.body.title,
                 detail: req.body.detail,
                 location: req.body.location,
-                // memberList: req.body.memberList,
             };
 
+            req.body.todoList.map(function (value) {
+                if (value.todoTitle === undefined) {
+                    return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+                }
+                newTodoList.push({
+                    tid: UuidService.generateUuid() + new Date().getTime(),
+                    todoTitle:value.todoTitle,
+                })
+            })
+
             // Save Schedule on DB
-            await ScheduleModel.create(schedule);
+            await ScheduleModel.create(schedule, newTodoList);
             const [result] = await ScheduleModel.read(sid, req.uid);
             return res.status(201).json({
                 message: '일정 등록이 완료되었습니다', body: result
@@ -55,10 +65,10 @@ const ScheduleController = {
     },
     update: async function (req, res) {
         try {
-            if (req.body.sid === undefined || req.body.colorHex === undefined) {
+            if (req.body.sid === undefined || req.body.date === undefined || req.body.startAt === undefined || req.body.endAt === undefined || req.body.colorHex === undefined || req.body.todoList === undefined || req.body.removedTidList === undefined) {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
-
+            const newTodoList = [];
             const schedule = {
                 sid: req.body.sid,
                 uid: req.uid,
@@ -69,11 +79,21 @@ const ScheduleController = {
                 title: req.body.title,
                 detail: req.body.detail,
                 location: req.body.location,
-                // memberList: req.body.memberList,
             };
+            req.body.todoList.map(function (value) {
+                if (value.tid === undefined || value.todoTitle === undefined || value.todoStatus === undefined) {
+                    return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+                }
+                newTodoList.push({
+                    tid: value.tid !== "" ? value.tid : UuidService.generateUuid() + new Date().getTime(),
+                    todoTitle:value.todoTitle,
+                    todoStatus:value.todoStatus,
+                })
+            })
+            const removedTidList = req.body.removedTidList;
 
             // Save Schedule on DB
-            await ScheduleModel.update(schedule);
+            await ScheduleModel.update(schedule, newTodoList, removedTidList);
             const [result] = await ScheduleModel.read(req.body.sid, req.uid);
             return res.status(201).json({message: '일정 수정이 완료되었습니다', body: result});
         } catch (error) {
