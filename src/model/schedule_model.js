@@ -3,8 +3,8 @@
 const db = require('../config/db');
 
 const Schedule = {
-    serialization: function (results) {
-        return results.reduce((acc, {
+    serialization: async function (results) {
+        return await results.reduce((acc, {
             sid,
             date,
             start_at,
@@ -58,17 +58,19 @@ const Schedule = {
         }, []);
     },
     create: async function (schedule, todoList) {
+        console.log('Start ======> create');
         try {
             await db.query(
                 'INSERT INTO tb_schedules (uid, sid, date, start_at, end_at, color_hex, title, detail, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [schedule.uid, schedule.sid, schedule.date, schedule.startAt, schedule.endAt, schedule.colorHex, schedule.title, schedule.detail, schedule.location],
             );
-            todoList.map(async function (todo) {
+            const promise = todoList.map(async function (todo) {
                 await db.query(
                     'INSERT INTO tb_schedule_and_todo (tid, sid, todo_title) VALUES (?, ?, ?)',
                     [todo.tid, schedule.sid, todo.todoTitle]
                 )
             });
+            await Promise.all(promise);
         } catch (error) {
             console.log(error);
             if (error.code === 'ER_NO_REFERENCED_ROW_2') {
@@ -81,7 +83,7 @@ const Schedule = {
         const query = 'SELECT tb_schedules.sid, tb_schedules.date, tb_schedules.start_at, tb_schedules.end_at, tb_schedules.color_hex, tb_schedules.title, tb_schedules.detail, tb_schedules.location, tb_schedules.created_at, tb_schedules.edited_at, tb_schedules.done, tb_schedules.done_at, tb_schedule_and_todo.tid, tb_schedule_and_todo.todo_title, tb_schedule_and_todo.todo_status, tb_schedule_and_todo.todo_updated_at FROM tb_schedules LEFT JOIN tb_schedule_and_todo ON tb_schedules.sid = tb_schedule_and_todo.sid WHERE uid = ? AND date = ?';
         try {
             const [results] = await db.query(query, [uid, date]);
-            return Schedule.serialization(results);
+            return await Schedule.serialization(results);
         } catch (error) {
             if (error) {
                 throw error;
@@ -96,7 +98,7 @@ const Schedule = {
             if (results.length === 0) {
                 throw {status: 404, message: "존재하지 않는 일정입니다"};
             }
-            return Schedule.serialization(results);
+            return await Schedule.serialization(results);
         } catch (error) {
             if (error) {
                 throw error;
@@ -115,12 +117,13 @@ const Schedule = {
                     'DELETE FROM tb_schedule_and_todo WHERE tid IN (?)',[removeTidList]
                 );
             }
-            todoList.map(async function (todo) {
+            const promise = todoList.map(async function (todo) {
                 await db.query(
                     'INSERT INTO tb_schedule_and_todo (tid, sid, todo_title, todo_status) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE todo_title = ?, todo_status = ?',
                     [todo.tid, schedule.sid, todo.todoTitle, todo.todoStatus, todo.todoTitle, todo.todoStatus]
                 )
             });
+            await Promise.all(promise);
             if (results.affectedRows === 0) {
                 throw {status: 404, message: "존재하지 않는 일정입니다"};
             }
