@@ -58,7 +58,6 @@ const Schedule = {
         }, []);
     },
     create: async function (schedule, todoList) {
-        console.log('Start ======> create');
         try {
             await db.query(
                 'INSERT INTO tb_schedules (uid, sid, date, start_at, end_at, color_hex, title, detail, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
