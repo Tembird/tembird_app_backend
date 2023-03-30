@@ -38,6 +38,23 @@ const Todo = {
             throw {status: 500, message: "일정 조회에 실패하였습니다"};
         }
     },
+    delete: async function (tid) {
+        try {
+            const [results] = await db.query(
+                'DELETE FROM tb_schedule_and_todo WHERE tid = ? LIMIT 1',
+                [tid],
+            );
+            if (results.affectedRows === 0) {
+                throw {status: 404, message: "해당 할일이 존재하지 않습니다"};
+            }
+        } catch (error) {
+            console.log(error);
+            if (error) {
+                throw error;
+            }
+            throw {status: 500, message: "할일 삭제에 실패하였습니다"};
+        }
+    },
 }
 
 module.exports = Todo;

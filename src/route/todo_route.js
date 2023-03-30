@@ -6,5 +6,6 @@ const Root = require('../config/root');
 const TodoController = require('../controller/todo_controller');
 
 router.put('', Root.authentication, TodoController.update);
+router.delete('/:tid', Root.authentication, TodoController.delete);
 
 module.exports = router;

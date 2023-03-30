@@ -15,7 +15,18 @@ const TodoController = {
             };
             await TodoModel.update(todo);
             const updated = await TodoModel.read(todo.tid);
-            return res.status(201).json({message: '일정 수정이 완료되었습니다', body: updated});
+            return res.status(201).json({message: '할일 수정이 완료되었습니다', body: updated});
+        } catch (error) {
+            return res.status(error.status).json({message: error.message});
+        }
+    },
+    delete: async function (req, res) {
+        try {
+            if (req.params.tid === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+            await TodoModel.delete(req.params.tid);
+            return res.status(200).json({message: '할일 삭제가 완료되었습니다'});
         } catch (error) {
             return res.status(error.status).json({message: error.message});
         }
