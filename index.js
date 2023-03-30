@@ -9,6 +9,7 @@ const FeedbackRoute = require('./src/route/feedback_route');
 const AnnouncementRoute = require('./src/route/announcement_route');
 const DocsRoute = require('./src/route/docs_route');
 const UpdateRoute = require('./src/route/update_route');
+const TodoRoute = require('./src/route/todo_route');
 
 app.use(bodyParser.json());
 app.use('/api/verification', verificationRoute);
@@ -19,6 +20,7 @@ app.use('/api/feedback', FeedbackRoute);
 app.use('/api/announcement', AnnouncementRoute);
 app.use('/api/docs', DocsRoute);
 app.use('/api/update', UpdateRoute);
+app.use('/api/todo', TodoRoute);
 
 app.listen(3000, () => {
     console.log('Server listening on port 3000');
