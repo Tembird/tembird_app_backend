@@ -3,6 +3,20 @@
 const db = require('../config/db');
 
 const Todo = {
+    create: async function (todo) {
+        try {
+            const [results] = await db.query(
+                'INSERT INTO tb_schedule_and_todo (tid, sid, todo_title, todo_status) VALUES (?, ?, ?, ?)',
+                [todo.tid, todo.sid, todo.todoTitle, todo.todoStatus],
+            );
+        } catch (error) {
+            console.log(error);
+            if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+                throw {status: 400, message: "올바르지 않은 요청입니다"};
+            }
+            throw {status: 500, message: "할일 등록 중 오류가 발생하였습니다"};
+        }
+    },
     update: async function (todo) {
         try {
             const [results] = await db.query(
