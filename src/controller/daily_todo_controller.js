@@ -46,40 +46,6 @@ const DailyTodoController = {
             return res.status(error.status).json({message: error.message});
         }
     },
-    updateTitle: async function (req, res) {
-        try {
-            if (req.body.title === undefined) {
-                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
-            }
-            const todo = {
-                id: req.body.id,
-                uid: req.uid,
-                title: req.body.title,
-            };
-            await DailyTodoModel.updateTitle(todo);
-            const updated = await DailyTodoModel.read(req.body.id, req.uid);
-            return res.status(201).json({message: '일정 제목 수정이 완료되었습니다', body: updated});
-        } catch (error) {
-            return res.status(error.status).json({message: error.message});
-        }
-    },
-    updateStatus: async function (req, res) {
-        try {
-            if (req.body.status === undefined) {
-                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
-            }
-            const todo = {
-                id: req.body.id,
-                uid: req.uid,
-                status: req.body.status,
-            };
-            await DailyTodoModel.updateStatus(todo);
-            const updated = await DailyTodoModel.read(req.body.id, req.uid);
-            return res.status(201).json({message: '일정 상태 수정이 완료되었습니다', body: updated});
-        } catch (error) {
-            return res.status(error.status).json({message: error.message});
-        }
-    },
     delete: async function (req, res) {
         try {
             if (req.params.id === undefined) {
