@@ -6,12 +6,15 @@ const DailyTodoLabel = {
     create: async function (dailyTodoLabel) {
         try {
             const [result] = await db.query(
-                'INSERT INTO tb_daily_todo_labels (date, uid, label_id) VALUES (?, ?, ?);',
+                'INSERT INTO tb_daily_todo_labels (date, uid, label_id) VALUES (?, ?, ?)',
                 [dailyTodoLabel.date, dailyTodoLabel.uid, dailyTodoLabel.labelId],
             );
             return result.insertId;
         } catch (error) {
             console.log(error);
+            if (error.code === 'ER_DUP_ENTRY') {
+                throw {status: 409, message: "이미 등록된 일정입니다"};
+            }
             if (error.code === 'ER_NO_REFERENCED_ROW_2') {
                 throw {status: 400, message: "올바르지 않은 요청입니다"};
             }
@@ -35,7 +38,7 @@ const DailyTodoLabel = {
     read: async function (id, uid) {
         try {
             const [results] = await db.query(
-                'SELECT id, date, label_id, start_at, end_at, create_at, updated_at FROM tb_daily_todo_labels WHERE id = ? AND uid = ? LIMIT 1',
+                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.start_at, tdtl.end_at, tdtl.create_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.id = ? AND tdtl.uid = ? LIMIT 1',
                 [id, uid],
             );
             if (results.length === 0) {
@@ -50,10 +53,10 @@ const DailyTodoLabel = {
             throw {status: 500, message: "일정을 불러오지 못했습니다"};
         }
     },
-    readAtDate: async function (date, uid) {
+    readByDate: async function (date, uid) {
         try {
             const [results] = await db.query(
-                'SELECT id, date, label_id, start_at, end_at, create_at, updated_at FROM tb_daily_todo_labels WHERE uid = ? AND date = ?',
+                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.start_at, tdtl.end_at, tdtl.create_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.uid = ? AND tdtl.date = ?',
                 [uid, date],
             );
             if (results.length === 0) {
