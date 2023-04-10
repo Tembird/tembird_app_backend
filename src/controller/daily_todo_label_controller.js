@@ -20,24 +20,6 @@ const DailyTodoLabelController = {
             return res.status(error.status).json({message: error.message});
         }
     },
-    update: async function (req, res) {
-        try {
-            if (req.body.id === undefined || req.body.startAt === undefined || req.body.endAt === undefined) {
-                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
-            }
-            const dailyTodoLabel = {
-                uid: req.uid,
-                id: req.body.id,
-                startAt: req.body.startAt,
-                endAt: req.body.endAt,
-            };
-            await DailyTodoLabelModel.update(dailyTodoLabel);
-            const updated = await DailyTodoLabelModel.read(req.body.id, req.uid);
-            return res.status(201).json({message: '일정 수정이 완료되었습니다', body: updated});
-        } catch (error) {
-            return res.status(error.status).json({message: error.message});
-        }
-    },
     read: async function (req, res) {
         try {
             if (req.params.id === undefined) {
@@ -53,7 +35,7 @@ const DailyTodoLabelController = {
         try {
             if (req.query.date !== undefined) {
                 const results = await DailyTodoLabelModel.readByDate(req.query.date, req.uid);
-                return res.status(200).json({message: '해당 일자의 일정 카테고리 조회가 완료되었습니다', body: results});
+                return res.status(200).json({message: '해당 일자의 일정 카테고리 리스트 조회가 완료되었습니다', body: results});
             }
             return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
         } catch (error) {
