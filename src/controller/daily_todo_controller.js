@@ -22,7 +22,7 @@ const DailyTodoController = {
     },
     update: async function (req, res) {
         try {
-            if (req.body.title === undefined && req.body.status === undefined) {
+            if (req.body.title === undefined && req.body.status === undefined && (req.body.startAt === undefined || req.body.endAt === undefined) ) {
                 return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
             }
             const todo = {
@@ -30,12 +30,17 @@ const DailyTodoController = {
                 uid: req.uid,
                 title: req.body.title,
                 status: req.body.status,
+                startAt: req.body.startAt,
+                endAt: req.body.endAt,
             };
 
-            if (todo.title === undefined) {
+            if (todo.title === undefined && todo.status === undefined) {
+                await DailyTodoModel.updateDuration(todo);
+            }
+            else if (todo.title === undefined && (todo.startAt === undefined || todo.endAt === undefined)) {
                 await DailyTodoModel.updateStatus(todo);
             }
-            else if (todo.status === undefined) {
+            else if (todo.status === undefined && (todo.startAt === undefined || todo.endAt === undefined)) {
                 await DailyTodoModel.updateTitle(todo);
             } else {
                 await DailyTodoModel.update(todo);
