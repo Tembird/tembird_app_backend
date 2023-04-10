@@ -170,7 +170,7 @@ const DailyTodo = {
     readAllByDate: async function (date, uid) {
         try {
             const [results] = await db.query(
-                    'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.create_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.date = ? AND tdtl.uid = ?',
+                    'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.date = ? AND tdtl.uid = ?',
                 [date, uid],
             );
             if (results.length === 0) {
@@ -188,7 +188,7 @@ const DailyTodo = {
     readAllByDailyLabel: async function (dailyLabelId, uid) {
         try {
             const [results] = await db.query(
-                'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.create_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.id = ? AND tdtl.uid = ?',
+                'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.id = ? AND tdtl.uid = ?',
                 [dailyLabelId, uid],
             );
             if (results.length === 0) {

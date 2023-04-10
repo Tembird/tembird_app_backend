@@ -24,7 +24,7 @@ const DailyTodoLabel = {
     read: async function (id, uid) {
         try {
             const [results] = await db.query(
-                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.create_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.id = ? AND tdtl.uid = ? LIMIT 1',
+                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.created_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.id = ? AND tdtl.uid = ? LIMIT 1',
                 [id, uid],
             );
             if (results.length === 0) {
@@ -42,7 +42,7 @@ const DailyTodoLabel = {
     readByDate: async function (date, uid) {
         try {
             const [results] = await db.query(
-                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.create_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.uid = ? AND tdtl.date = ?',
+                'SELECT tdtl.id, ttl.id as "label_id", ttl.title, ttl.color_hex, tdtl.date, tdtl.created_at, tdtl.updated_at FROM tb_daily_todo_labels tdtl JOIN tb_todo_labels ttl on ttl.id = tdtl.label_id WHERE tdtl.uid = ? AND tdtl.date = ?',
                 [uid, date],
             );
             if (results.length === 0) {
