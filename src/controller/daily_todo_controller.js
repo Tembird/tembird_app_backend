@@ -11,6 +11,8 @@ const DailyTodoController = {
             const todo = {
                 uid: req.uid,
                 title: req.body.title,
+                location: req.body.location,
+                detail: req.body.detail,
                 dailyLabelId: req.body.dailyLabelId,
             };
             const createdId = await DailyTodoModel.create(todo);
@@ -29,6 +31,8 @@ const DailyTodoController = {
                 id: req.body.id,
                 uid: req.uid,
                 title: req.body.title,
+                location: req.body.location,
+                detail: req.body.detail,
                 status: req.body.status,
                 startAt: req.body.startAt,
                 endAt: req.body.endAt,
@@ -41,7 +45,7 @@ const DailyTodoController = {
                 await DailyTodoModel.updateStatus(todo);
             }
             else if (todo.status === undefined && (todo.startAt === undefined || todo.endAt === undefined)) {
-                await DailyTodoModel.updateTitle(todo);
+                await DailyTodoModel.updateInfo(todo);
             } else {
                 await DailyTodoModel.update(todo);
             }

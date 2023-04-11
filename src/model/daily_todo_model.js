@@ -5,7 +5,7 @@ const db = require('../config/db');
 const DailyTodo = {
     serialization: async function (results) {
         return await results.reduce((acc, {
-            label_id, label_origin_id, label_title, label_color_hex, label_date, label_start_at, label_end_at, label_created_at, label_updated_at, id, title, status, created_at, updated_at, start_at, end_at,
+            label_id, label_origin_id, label_title, label_color_hex, label_date, label_start_at, label_end_at, label_created_at, label_updated_at, id, title, location, detail, status, created_at, updated_at, start_at, end_at,
         }) => {
             const foundIndex = acc.findIndex(result => result.id === label_id);
             if (foundIndex === -1) {
@@ -23,6 +23,8 @@ const DailyTodo = {
                         {
                             'id': id,
                             'title': title,
+                            'location': location,
+                            'detail': detail,
                             'status': status,
                             'created_at': created_at,
                             'updated_at': updated_at,
@@ -35,6 +37,8 @@ const DailyTodo = {
                 acc[foundIndex]['todo_list'].push({
                     'id': id,
                     'title': title,
+                    'location': location,
+                    'detail': detail,
                     'status': status,
                     'created_at': created_at,
                     'updated_at': updated_at,
@@ -48,8 +52,8 @@ const DailyTodo = {
     create: async function (todo) {
         try {
             const [result] = await db.query(
-                'INSERT INTO tb_daily_todo (daily_label_id, title) SELECT id, ? FROM tb_daily_todo_labels WHERE id = ? AND uid = ?',
-                [todo.title, todo.dailyLabelId, todo.uid],
+                'INSERT INTO tb_daily_todo (daily_label_id, title, location, detail) SELECT id, ?, ?, ? FROM tb_daily_todo_labels WHERE id = ? AND uid = ?',
+                [todo.title, todo.location, todo.detail, todo.dailyLabelId, todo.uid],
             );
             return result.insertId;
         } catch (error) {
@@ -66,8 +70,8 @@ const DailyTodo = {
     update: async function (todo) {
         try {
             const [results] = await db.query(
-                'UPDATE tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id SET tdt.title = ?, tdt.status = ?, tdt.start_at = ?, tdt.end_at = ? WHERE tdt.id = ? AND tdtl.uid = ?',
-                [todo.title, todo.status, todo.startAt, todo.endAt, todo.id, todo.uid],
+                'UPDATE tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id SET tdt.title = ?, tdt.location = ?, tdt.detail = ?, tdt.status = ?, tdt.start_at = ?, tdt.end_at = ? WHERE tdt.id = ? AND tdtl.uid = ?',
+                [todo.title, todo.location, todo.detail, todo.status, todo.startAt, todo.endAt, todo.id, todo.uid],
             );
             if (results.affectedRows === 0) {
                 throw {status: 404, message: "존재하지 않는 항목입니다"};
@@ -86,11 +90,11 @@ const DailyTodo = {
             throw {status: 500, message: "일정 수정에 실패하였습니다"};
         }
     },
-    updateTitle: async function (todo) {
+    updateInfo: async function (todo) {
         try {
             const [results] = await db.query(
-                'UPDATE tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id SET tdt.title = ? WHERE tdt.id = ? AND tdtl.uid = ?',
-                [todo.title, todo.id, todo.uid],
+                'UPDATE tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id SET tdt.title = ?, tdt.location = ?, tdt.detail = ? WHERE tdt.id = ? AND tdtl.uid = ?',
+                [todo.title, todo.location, todo.detail, todo.id, todo.uid],
             );
             if (results.affectedRows === 0) {
                 throw {status: 404, message: "존재하지 않는 항목입니다"};
@@ -152,7 +156,7 @@ const DailyTodo = {
     read: async function (id, uid) {
         try {
             const [results] = await db.query(
-                'SELECT tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id WHERE tdt.id = ? AND tdtl.uid = ? LIMIT 1',
+                'SELECT tdt.id, tdt.title, tdt.location, tdt.detail, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id WHERE tdt.id = ? AND tdtl.uid = ? LIMIT 1',
                 [id, uid],
             );
             if (results.length === 0) {
@@ -170,7 +174,7 @@ const DailyTodo = {
     readAllByDate: async function (date, uid) {
         try {
             const [results] = await db.query(
-                    'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.date = ? AND tdtl.uid = ?',
+                    'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.location, tdt.detail, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.date = ? AND tdtl.uid = ?',
                 [date, uid],
             );
             if (results.length === 0) {
@@ -188,7 +192,7 @@ const DailyTodo = {
     readAllByDailyLabel: async function (dailyLabelId, uid) {
         try {
             const [results] = await db.query(
-                'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.id = ? AND tdtl.uid = ?',
+                'SELECT tdtl.id AS "label_id", tdtl.label_id AS "label_origin_id", ttl.title AS "label_title", ttl.color_hex AS "label_color_hex", tdtl.date AS "label_date", tdtl.created_at AS "label_created_at", tdtl.updated_at AS "label_updated_at", tdt.id, tdt.title, tdt.location, tdt.detail, tdt.status, tdt.created_at, tdt.updated_at, tdt.start_at, tdt.end_at FROM tb_daily_todo tdt JOIN tb_daily_todo_labels tdtl ON tdt.daily_label_id = tdtl.id JOIN tb_todo_labels ttl ON tdtl.label_id = ttl.id WHERE tdtl.id = ? AND tdtl.uid = ?',
                 [dailyLabelId, uid],
             );
             if (results.length === 0) {
