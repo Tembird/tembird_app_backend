@@ -51,15 +51,12 @@ const TodoLabel = {
             throw {status: 500, message: "카테고리 조회에 실패하였습니다"};
         }
     },
-    readAll: async function (id, uid) {
+    readAll: async function (uid) {
         try {
             const [results] = await db.query(
                 'SELECT id, title, color_hex, created_at, updated_at FROM tb_todo_labels WHERE uid = ?',
-                [id, uid],
+                [uid],
             );
-            if (results.length === 0) {
-                throw {status: 404, message: "등록된 카테고리가 없습니다"};
-            }
             return results;
         } catch (error) {
             console.log(error);
