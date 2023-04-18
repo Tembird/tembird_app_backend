@@ -31,8 +31,8 @@ const TodoLabelController = {
                 title: req.body.title,
                 colorHex: req.body.colorHex,
             };
-            const updatedId = await TodoLabelModel.update(todoLabel);
-            const updated = await TodoLabelModel.read(updatedId, req.uid);
+            await TodoLabelModel.update(todoLabel);
+            const updated = await TodoLabelModel.read(req.body.id, req.uid);
             return res.status(201).json({message: '카테고리 수정이 완료되었습니다', body: updated});
         } catch (error) {
             return res.status(error.status).json({message: error.message});

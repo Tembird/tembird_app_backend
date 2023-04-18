@@ -20,11 +20,10 @@ const TodoLabel = {
     },
     update: async function (todoLabel) {
         try {
-            const [result] = await db.query(
+            await db.query(
                 'UPDATE tb_todo_labels SET title = ?, color_hex = ? WHERE id = ? AND uid = ? LIMIT 1',
                 [todoLabel.title, todoLabel.colorHex, todoLabel.id, todoLabel.uid],
             );
-            return result.insertId;
         } catch (error) {
             console.log(error);
             if (error.code === 'ER_NO_REFERENCED_ROW_2') {
