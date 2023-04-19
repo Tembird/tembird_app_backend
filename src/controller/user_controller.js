@@ -56,15 +56,20 @@ const UserController = {
             // Get User from DB
             const user = await UserModel.getUserByEmail(email);
 
+            if (user.isRemoved === 1) {
+                return res.status(403).json({message: '삭제된 계정입니다\n복구를 위해서는 고객 센터로 문의해주세요'});
+            }
+
+            if (user.isValid === 0) {
+                return res.status(403).json({message: '사용할 수 없는 계정입니다\n고객 센터로 문의해주세요'});
+            }
+
             // Check Password is Correct
             const isCorrectPassword = await EncryptionService.compareEncryptedPassword(password, user.password);
             if (!isCorrectPassword) {
                 return res.status(400).json({message: '올바르지 않은 비밀번호입니다'});
             }
 
-            if (user.isValid === 0) {
-                return res.status(403).json({message: '사용할 수 없는 계정입니다\n고객 센터로 문의해주세요'});
-            }
 
             // Generate AccessToken
             const accessToken = await AuthorizationService.generateAccessToken(user.uid, user.username);
@@ -196,6 +201,26 @@ const UserController = {
 
             await UserModel.updateDevice(uid, platform, platformVersion, buildNum);
             return res.status(201).json({message: '유저 기록 저장에 성공하였습니다'});
+        } catch (error) {
+            return res.status(error.status).json({message:error.message});
+        }
+    },
+    updateToRemove: async function (req, res) {
+        try {
+            const uid = req.uid;
+            const password = req.body.password;
+            if (password === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            const user = await UserModel.getUserByUid(uid);
+            const isCorrectUser = await EncryptionService.compareEncryptedPassword(password, user.password);
+            if (!isCorrectUser) {
+                return res.status(400).json({message: '비밀번호가 일치하지 않습니다'});
+            }
+
+            await UserModel.updateToRemove(uid);
+            return res.status(201).json({message: '계정 삭제에 성공하였습니다'});
         } catch (error) {
             return res.status(error.status).json({message:error.message});
         }

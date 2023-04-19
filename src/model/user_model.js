@@ -27,6 +27,7 @@ const User = {
                 username: results[0].username,
                 isValid: results[0].is_valid,
                 refreshToken: results[0].refresh_token,
+                isRemoved: results[0].is_removed,
             };
 
             return user;
@@ -45,12 +46,6 @@ const User = {
             }
 
             return results[0];
-
-            // const user = {
-            //     password: results[0].password,
-            // };
-            //
-            // return user;
         } catch (error) {
             if (error) {
                 throw error;
@@ -124,6 +119,19 @@ const User = {
                 throw error;
             }
             throw {status: 500, message: "유저 기록 저장에 실패하였습니다"};
+        }
+    },
+    updateToRemove: async function (uid) {
+        try {
+            const [results] = await db.query('UPDATE tb_users SET is_removed = 1, removed_at = NOW() WHERE uid = ? LIMIT 1', [uid]);
+            if (results.affectedRows === 0) {
+                throw {status: 404, message: "존재하지 않는 사용자입니다"};
+            }
+        } catch (error) {
+            if (error) {
+                throw error;
+            }
+            throw {status: 500, message: "계정 삭제에 실패하였습니다"};
         }
     },
 };

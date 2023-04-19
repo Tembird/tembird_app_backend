@@ -13,5 +13,6 @@ router.put('/update-password', Root.authentication, UserController.updatePasswor
 router.put('/reset-password', UserController.resetPassword);
 router.get('', Root.authentication, UserController.read);
 router.put('/device', Root.authentication, UserController.updateDevice);
+router.put('/remove', Root.authentication, UserController.updateToRemove);
 
 module.exports = router;
