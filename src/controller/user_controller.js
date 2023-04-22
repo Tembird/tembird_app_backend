@@ -4,7 +4,6 @@ const UserModel = require('../model/user_model');
 const AuthorizationService = require('../service/authorization_service');
 const EncryptionService = require('../service/encryption_service');
 const UuidService = require('../service/uuid_service');
-const config = require('../config/config');
 
 const UserController = {
     generateRandomUsername: () => 'unknown#' + new Date().getTime(),
@@ -56,18 +55,18 @@ const UserController = {
             // Get User from DB
             const user = await UserModel.getUserByEmail(email);
 
+            // Check Password is Correct
+            const isCorrectPassword = await EncryptionService.compareEncryptedPassword(password, user.password);
+            if (!isCorrectPassword) {
+                return res.status(400).json({message: '올바르지 않은 비밀번호입니다'});
+            }
+
             if (user.isRemoved === 1) {
                 return res.status(403).json({message: '삭제된 계정입니다\n복구를 위해서는 고객 센터로 문의해주세요'});
             }
 
             if (user.isValid === 0) {
                 return res.status(403).json({message: '사용할 수 없는 계정입니다\n고객 센터로 문의해주세요'});
-            }
-
-            // Check Password is Correct
-            const isCorrectPassword = await EncryptionService.compareEncryptedPassword(password, user.password);
-            if (!isCorrectPassword) {
-                return res.status(400).json({message: '올바르지 않은 비밀번호입니다'});
             }
 
 

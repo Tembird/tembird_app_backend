@@ -67,7 +67,7 @@ const AuthorizationService = {
             };
             return await jwt.verify(token, refreshTokenSecretKey, options);
         } catch (e) {
-            throw {status: 403, message: "유효하지 않은 리프레시 토큰입니다"};
+            throw {status: 403, message: "다시 로그인해주세요"};
         }
     },
 };
