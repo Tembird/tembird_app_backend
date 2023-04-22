@@ -10,5 +10,6 @@ router.patch('', Root.authentication, DailyTodoController.update);
 router.get('/:id', Root.authentication, DailyTodoController.read);
 router.get('/', Root.authentication, DailyTodoController.readByQuery);
 router.delete('/:id', Root.authentication, DailyTodoController.delete);
+router.delete('/duration/:id', Root.authentication, DailyTodoController.deleteDuration);
 
 module.exports = router;

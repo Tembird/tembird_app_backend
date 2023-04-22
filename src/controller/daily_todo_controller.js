@@ -66,6 +66,24 @@ const DailyTodoController = {
             return res.status(error.status).json({message: error.message});
         }
     },
+    deleteDuration: async function (req, res) {
+        try {
+            if (req.params.id === undefined) {
+                return res.status(400).json({message: '올바른 형식의 요청이 아닙니다'});
+            }
+
+            const todo = {
+                id: req.params.id,
+                uid: req.uid,
+                startAt: null,
+                endAt: null,
+            };
+            await DailyTodoModel.updateDuration(todo);
+            return res.status(200).json({message: '일정 시간 삭제가 완료되었습니다'});
+        } catch (error) {
+            return res.status(error.status).json({message: error.message});
+        }
+    },
     read: async function (req, res) {
         try {
             if (req.params.id === undefined) {
